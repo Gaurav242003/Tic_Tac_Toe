@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Square.css'
 
 const circleSvg = (
@@ -42,15 +42,33 @@ const circleSvg = (
       </g>
     </svg>
   );
-  
+
 const Square = ({
     setGameState,
-    id
+    id,
+    curPlayer,
+    setCurPlayer
 }) => {
 
+    const [icon,setIcon]=useState(null);
+    const clickOnSquare=()=>{
+        if(!icon){
+            if(curPlayer=== 'circle'){
+                setIcon(circleSvg);
+            }else{
+                setIcon(crossSvg); 
+            }
 
+            setCurPlayer(curPlayer=== 'circle' ? 'cross': 'circle')
+            
+        }
+    }
     return (
-        <div className='square'></div>
+        <div className='square' onClick={clickOnSquare}>
+            {
+                icon
+            }
+        </div>
     )
 }
 

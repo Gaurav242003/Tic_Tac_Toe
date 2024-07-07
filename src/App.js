@@ -7,6 +7,7 @@ const renderFrom=[[1,2,3],[4,5,6],[7,8,9]];
 function App() {
   
   const [gameState,setGameState]=useState(renderFrom);
+  const [curPlayer,setCurPlayer]=useState('circle');
 
   return (
     <div className="main-div">
@@ -21,8 +22,8 @@ function App() {
          {
            renderFrom.map( (arr) =>
              arr.map((e)=>{
-              return <Square  setGameState={setGameState} id={e} key={e}/>
-             })
+              return <Square  setGameState={setGameState} id={e} key={e}  curPlayer={curPlayer} setCurPlayer={setCurPlayer}/>
+               })
            )
          }
      </div>
