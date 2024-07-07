@@ -8,3 +8,7 @@
 .square:hover{
     cursor: pointer;
 }
+
+.game-over{
+    cursor: not-allowed !important;
+}
