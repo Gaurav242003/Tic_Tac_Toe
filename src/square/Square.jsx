@@ -48,7 +48,8 @@ const Square = ({
     id,
     curPlayer,
     setCurPlayer,
-    finishedState
+    finishedState,
+    finishedArrayState
 }) => {
 
     const [icon,setIcon]=useState(null);
@@ -80,7 +81,9 @@ const Square = ({
         })
     }
     return (
-        <div className={`square ${finishedState ? 'game-over': ''}`} onClick={clickOnSquare}>
+
+         
+        <div className={`square ${finishedState ? 'game-over': ''} ${finishedArrayState.includes(id) ? finishedState + "-won" : ""}`} onClick={clickOnSquare}>
             {
                 icon
             }
