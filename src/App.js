@@ -1,6 +1,8 @@
 import Square from './square/Square';
 import './App.css';
 import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import Swal from 'sweetalert2'
 
 const renderFrom = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
 
@@ -11,6 +13,41 @@ function App() {
   const [finishedState, setFinishedState] = useState(false);
   const [finishedArrayState, setFinishedArrayState] = useState([]);
   const [playOnline, setPlayOnline] = useState(false);
+  const [socket,setSocket]=useState(null);
+  const [playerName,setPlayerName]=useState(null);
+
+
+
+  const takePlayerName=async()=>{
+    const result=await Swal.fire({
+      title: "Enter your IP address",
+      input: "text",
+ 
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return "You need to write something!";
+        }
+      }
+    });
+
+    return result;
+  }
+
+  socket?.on("connect", function () {
+    setPlayOnline(true);
+  });
+
+   async function playOnlineClick(){
+    const result= await takePlayerName();
+    console.log(result);
+    if(!result.isConfirmed) return;
+    const newsocket = io("http://localhost:4000", {
+      autoConnect: true
+    });
+
+    setSocket(newsocket);
+  }
 
   const checkWinner = () => {
     // row dynamic
@@ -68,7 +105,7 @@ function App() {
   if (!playOnline) {
     return (
       <div className="main-div">
-        <button  className="playOnline">
+        <button  className="playOnline" onClick={playOnlineClick} >
           Play Online
         </button>
       </div>
