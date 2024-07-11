@@ -13,16 +13,17 @@ function App() {
   const [finishedState, setFinishedState] = useState(false);
   const [finishedArrayState, setFinishedArrayState] = useState([]);
   const [playOnline, setPlayOnline] = useState(false);
-  const [socket,setSocket]=useState(null);
-  const [playerName,setPlayerName]=useState(null);
+  const [socket, setSocket] = useState(null);
+  const [playerName, setPlayerName] = useState("");
+  const [opponentName,setOpponentName]=useState(null);
 
 
 
-  const takePlayerName=async()=>{
-    const result=await Swal.fire({
-      title: "Enter your IP address",
+  const takePlayerName = async () => {
+    const result = await Swal.fire({
+      title: "Enter your Name",
       input: "text",
- 
+
       showCancelButton: true,
       inputValidator: (value) => {
         if (!value) {
@@ -34,16 +35,34 @@ function App() {
     return result;
   }
 
+
+
   socket?.on("connect", function () {
     setPlayOnline(true);
   });
 
-   async function playOnlineClick(){
-    const result= await takePlayerName();
-    console.log(result);
-    if(!result.isConfirmed) return;
+  socket?.on("opponentNotFound", function () {
+    setOpponentName(false);
+  });
+
+  socket?.on("opponentFound", function (data) {
+    
+    setOpponentName(data.opponentName);
+  });
+
+  async function playOnlineClick() {
+    const result = await takePlayerName();
+   
+    if (!result.isConfirmed) return;
+
+    const username = result.value;
+    setPlayerName(username);
     const newsocket = io("http://localhost:4000", {
       autoConnect: true
+    });
+
+    newsocket?.emit("request_to_play", {
+      playerName: username,
     });
 
     setSocket(newsocket);
@@ -105,18 +124,28 @@ function App() {
   if (!playOnline) {
     return (
       <div className="main-div">
-        <button  className="playOnline" onClick={playOnlineClick} >
+        <button className="playOnline" onClick={playOnlineClick} >
           Play Online
         </button>
       </div>
     );
   }
 
+  if(playOnline && !opponentName){
+    return (
+      <div className='waiting'>
+        <p>
+          Waiting for opponent...
+        </p>
+      </div>
+    )
+  }  
+
   return (
     <div className="main-div">
       <div className='move-detection'>
-        <div className='left'>You</div>
-        <div className='right'>Opponent</div>
+        <div className='left'>{playerName}</div>
+        <div className='right'>{opponentName}</div>
       </div>
       <div>
 
@@ -137,6 +166,9 @@ function App() {
           finishedState ? <h1 className='winner'>
             {finishedState != "Draw" ? `${finishedState} won the game` : "DRAW"}
           </h1> : null
+        }
+        {
+          !finishedState && opponentName && <h3  className='winner'> You are playing against {opponentName}</h3>
         }
 
       </div>
