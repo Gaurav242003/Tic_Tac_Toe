@@ -75,3 +75,11 @@
   left: 0;
   
 }
+
+.current-move-cross{
+  background-color: #3FA2F0 !important;
+}
+
+.current-move-circle{
+  background-color: #DD7F9F !important;
+}  

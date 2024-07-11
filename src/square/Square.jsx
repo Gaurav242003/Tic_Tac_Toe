@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import './Square.css'
 
+
+//circle symbol
 const circleSvg = (
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -22,6 +24,8 @@ const circleSvg = (
     </svg>
   );
   
+
+//cross symbol
   const crossSvg = (
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -49,11 +53,19 @@ const Square = ({
     curPlayer,
     setCurPlayer,
     finishedState,
-    finishedArrayState
+    finishedArrayState,
+    gamestate,
+    socket,
+    currentElement,
+    playingAs
 }) => {
 
     const [icon,setIcon]=useState(null);
     const clickOnSquare=()=>{
+        if(playingAs!==curPlayer){
+          return;
+        }
+        
         if(finishedState) return;
         if(!icon){
             if(curPlayer=== 'circle'){
@@ -65,7 +77,16 @@ const Square = ({
         }
 
         const myplayer=curPlayer;
-        setCurPlayer(curPlayer=== 'circle' ? 'cross': 'circle')
+    
+        
+        socket.emit("playerMoveFromClient",{
+          state:{
+            id,
+           sign:myplayer
+          }
+        })
+
+        setCurPlayer(curPlayer=== 'circle' ? 'cross': 'circle');
         setGameState(prevState => {
             let newState=[...prevState];
           
@@ -75,17 +96,17 @@ const Square = ({
 
             newState[rowIndex][colIndex]=myplayer;
 
-            console.log(newState);
+            // console.log(newState);
            
             return newState;
         })
-    }
+    } 
     return (
 
          
-        <div className={`square ${finishedState ? 'game-over': ''} ${finishedArrayState.includes(id) ? finishedState + "-won" : ""}`} onClick={clickOnSquare}>
+        <div className={`square ${finishedState ? 'game-over': ''}   ${ playingAs!==curPlayer? 'game-over': ''} ${finishedArrayState.includes(id) ? finishedState + "-won" : ""}`} onClick={clickOnSquare}>
             {
-                icon
+              currentElement==="circle"?circleSvg:currentElement==="cross"?crossSvg:icon
             }
         </div>
     )
