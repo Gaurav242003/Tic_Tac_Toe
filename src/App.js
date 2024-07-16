@@ -83,7 +83,7 @@ function App() {
     const username = result.value;
     setPlayerName(username);
     //after taking player name, sending connection request to the server
-    const newsocket = io("http://localhost:4000", {
+    const newsocket = io("https://tic-tac-toe-backend-tfgt.onrender.com", {
       autoConnect: true
     });
 
